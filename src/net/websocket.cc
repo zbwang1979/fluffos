@@ -10,7 +10,7 @@
 
 enum PROTOCOL_ID {
   WS_HTTP = 0,
-  WS_ASCII = 1,
+  WS_ASCII = PROTOCOL_WS_ASCII,
 };
 
 static struct lws_protocols protocols[] = {
@@ -97,11 +97,9 @@ struct lws *init_user_websocket(struct lws_context *context, evutil_socket_t fd)
 
 void websocket_send_text(struct lws *wsi, const char *data, size_t len) {
   switch (lws_get_protocol(wsi)->id) {
-    case WS_ASCII: {
-      auto pss = reinterpret_cast<ws_ascii_session *>(lws_wsi_user(wsi));
-      evbuffer_add(pss->buffer, data, len);
-      lws_callback_on_writable(wsi);
-    }
+    case WS_ASCII:
+      ws_ascii_send(wsi, data, len);
+      break;
     default:
       // No way to send message
       return;

@@ -878,36 +878,14 @@ void on_user_websocket_received(interactive_t* ip, const char* data, size_t len)
     }
   }
 
-  if(len == 1 && data[0] == '\r') { // line feed triggers current command
-     on_user_input(ip, "\n", 1);  // make cmd_in_buf work
+  on_user_input(ip, data, len);
 
-    if (cmd_in_buf(ip)) {
-      ip->iflags |= CMD_IN_BUF;
+  if (cmd_in_buf(ip)) {
+    ip->iflags |= CMD_IN_BUF;
 
-      struct timeval zero_sec = {0, 0};
-      evtimer_del(ip->ev_command);
-      evtimer_add(ip->ev_command, &zero_sec);
-
-      std::string echo;
-      echo += "\r\n"; // to left edge and linefeed
-      add_message(ip->ob, echo.c_str(), echo.size());
-    }
-  } else {
-    // if we got an pure escape sequence, ignore it entirely , this includes arrow keys
-    if (data[0] != 0x1b) {
-      on_user_input(ip, data, len);
-    }
-
-    std::string echo;
-    echo.reserve(255);
-    echo += "\r"; // to left edge
-    echo += "\x1b[2K"; // clearline
-    echo += ip->prompt;  // prompt
-    for(auto p = ip->text + ip->text_start; p < ip->text + ip->text_end; p++) {
-      echo += *p;
-      if (*p == '\n') echo += '\r';
-    }
-    add_message(ip->ob, echo.c_str(), echo.size());
+    struct timeval zero_sec = {0, 0};
+    evtimer_del(ip->ev_command);
+    evtimer_add(ip->ev_command, &zero_sec);
   }
 }
 
