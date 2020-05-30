@@ -26,7 +26,7 @@ v2019 版目前支持在以下系统中编译：ubuntu 18.04+ (包括 WSL), rasp
 
 Ubuntu 系统请执行以下指令安装编译所需的包，包括编译 v2017 和 v2019 所需的库。
 
-    sudo apt install libjemalloc-dev bison zlib1g-dev libssl-dev libmariadb-dev libpcre3-dev libevent-dev libicu-dev gcc g++ autoconf automake cmake -y
+    sudo apt install libjemalloc-dev bison zlib1g-dev libssl-dev libmariadb-dev libpcre3-dev libevent-dev libicu-dev gcc g++ autoconf automake cmake build-essential -y
 
 ### v2017 编译
 
